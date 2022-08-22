@@ -1,2 +1,5 @@
+.DS_store
+.vscode
+
 frontend/node_modules/
 frontend/package-lock.json
