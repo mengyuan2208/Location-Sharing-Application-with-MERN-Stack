@@ -7,10 +7,12 @@ import "./PlaceList.css";
 const PlaceList = (props) => {
   if (props.items.length === 0) {
     return (
-      <Card className="place-list center">
-        <h2>No place found. Maybe create one?</h2>
-        <button>Share place</button>
-      </Card>
+      <div className="place-list center">
+        <Card>
+          <h2>No place found. Maybe create one?</h2>
+          <button>Share place</button>
+        </Card>
+      </div>
     );
   }
   return (
