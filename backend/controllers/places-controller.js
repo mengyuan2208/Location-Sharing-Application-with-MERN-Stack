@@ -3,7 +3,7 @@ const uuid = require("uuid");
 
 const HttpError = require("../models/http-error");
 
-const DUMMY_PLACES = [
+let DUMMY_PLACES = [
   {
     id: "p1",
     title: "Lorenzo",
@@ -32,19 +32,17 @@ const getPlaceById = (req, res, next) => {
   res.json({ place }); // { place } expands to { place: place }
 };
 
-const getPlaceByUserId = (req, res, next) => {
+const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
-  const place = DUMMY_PLACES.find((p) => {
-    return p.creator === userId;
-  });
+  const places = DUMMY_PLACES.filter((p) => p.creator === userId);
 
-  if (!place) {
+  if (!places || places.length === 0) {
     // Use return to make sure the following code doesn't run.
     return next(
-      new HttpError("Could not find a place for the provided user id.", 404)
+      new HttpError("Could not find places for the provided user id.", 404)
     );
   }
-  res.json({ place }); // { place } expands to { place: place }
+  res.json({ places }); // { place } expands to { place: place }
 };
 
 const createPlace = (req, res, next) => {
@@ -64,7 +62,35 @@ const createPlace = (req, res, next) => {
   res.status(201).json({ place: createdPlace }); // normal code if something was successfully created on the server
 };
 
+const updatePlaceById = (req, res, next) => {
+  const placeId = req.params.pid;
+  const { title, description } = req.body;
+
+  // ... creates a new object and copies all key-value pairs
+  // the constant stores the address of the object, not the object itself
+  const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) };
+  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
+  updatedPlace.title = title;
+  updatedPlace.description = description;
+
+  DUMMY_PLACES[placeIndex] = updatedPlace;
+
+  res.status(200).json({ place: updatedPlace });
+};
+
+const deletePlace = (req, res, next) => {
+  const placeId = req.params.pid;
+  // Filter runs the given function on every element in DUMMY_PLACES.
+  // If it returns true, we keep the place in the newly returned array.
+  // If it returns false, we drop it.
+  // The original array is not touched.
+  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
+  res.status(200).json({ message: "Deleted place." });
+};
+
 // export multiple thins
 exports.getPlaceById = getPlaceById; //don't execute it, just want to export a pointer to the function
-exports.getPlaceByUserId = getPlaceByUserId;
+exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
+exports.updatePlaceById = updatePlaceById;
+exports.deletePlace = deletePlace;

@@ -10,13 +10,13 @@ const app = express();
 // and calls next automatically.
 app.use(bodyParser.json());
 
+app.use("/api/places", placeRoutes);
+
 // Handles errors for unsupported routes.
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route", 404);
   throw error;
 });
-
-app.use("/api/places", placeRoutes);
 
 // If providing four parameters, Express will recognize it as an error handling middleware function.
 // Only be executed on the requests that have an error.
