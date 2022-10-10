@@ -2,8 +2,19 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const placeRoutes = require("./routes/places-routes");
+const HttpError = require("./models/http-error");
 
 const app = express();
+
+// Parses incoming request body, extracts JSON data, and converts it to regular JS data structures,
+// and calls next automatically.
+app.use(bodyParser.json());
+
+// Handles errors for unsupported routes.
+app.use((req, res, next) => {
+  const error = new HttpError("Could not find this route", 404);
+  throw error;
+});
 
 app.use("/api/places", placeRoutes);
 

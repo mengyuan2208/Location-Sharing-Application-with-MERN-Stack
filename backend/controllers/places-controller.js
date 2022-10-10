@@ -1,4 +1,6 @@
 // middleware functions
+const uuid = require("uuid");
+
 const HttpError = require("../models/http-error");
 
 const DUMMY_PLACES = [
@@ -43,8 +45,26 @@ const getPlaceByUserId = (req, res, next) => {
     );
   }
   res.json({ place }); // { place } expands to { place: place }
-}
+};
+
+const createPlace = (req, res, next) => {
+  // Data is encoded in the post request body.
+  const { title, description, coordinates, address, creator } = req.body; // shortcut for const title = req.body.title;
+  const createdPlace = {
+    id: uuid.v4(),
+    title, // shortcut for title: title,
+    description,
+    location: coordinates,
+    address,
+    creator,
+  };
+
+  DUMMY_PLACES.push(createdPlace);
+
+  res.status(201).json({ place: createdPlace }); // normal code if something was successfully created on the server
+};
 
 // export multiple thins
 exports.getPlaceById = getPlaceById; //don't execute it, just want to export a pointer to the function
 exports.getPlaceByUserId = getPlaceByUserId;
+exports.createPlace = createPlace;
