@@ -88,7 +88,7 @@ const deletePlace = (req, res, next) => {
   res.status(200).json({ message: "Deleted place." });
 };
 
-// export multiple thins
+// export multiple things
 exports.getPlaceById = getPlaceById; //don't execute it, just want to export a pointer to the function
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
