@@ -3,6 +3,7 @@ const uuid = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const getCoordsForAddress = require("../util/location");
 
 let DUMMY_PLACES = [
   {
@@ -39,6 +40,7 @@ const getPlacesByUserId = (req, res, next) => {
 
   if (!places || places.length === 0) {
     // Use return to make sure the following code doesn't run.
+    // next() doesn't automatically stop the function. throw does.
     return next(
       new HttpError("Could not find places for the provided user id.", 404)
     );
@@ -46,14 +48,26 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ places }); // { place } expands to { place: place }
 };
 
-const createPlace = (req, res, next) => {
+const createPlace = async (req, res, next) => {
   // Data is encoded in the post request body.
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    // throw will not work correctly with async
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
   }
 
-  const { title, description, coordinates, address, creator } = req.body; // shortcut for const title = req.body.title;
+  const { title, description, address, creator } = req.body; // shortcut for const title = req.body.title;
+
+  // handle error when using async await
+  let coordinates;
+  try {
+    coordinates = await getCoordsForAddress(address);
+  } catch (error) {
+    return next(error);
+  }
+
   const createdPlace = {
     id: uuid.v4(),
     title, // shortcut for title: title,
