@@ -56,7 +56,7 @@ const signup = async (req, res, next) => {
     email,
     password,
     image:
-      "https://en.wikipedia.org/wiki/File:Image_created_with_a_mobile_phone.png",
+      "https://images.pexels.com/photos/839011/pexels-photo-839011.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
     places: [],
   });
 
