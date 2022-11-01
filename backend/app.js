@@ -12,6 +12,16 @@ const app = express();
 // and calls next automatically.
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
+
 app.use("/api/places", placeRoutes);
 app.use("/api/users", userRoutes);
 
@@ -35,7 +45,9 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb+srv://Meng:ym.6549516@cluster0.6km9p.mongodb.net/places?retryWrites=true&w=majority")
+  .connect(
+    "mongodb+srv://Meng:ym.6549516@cluster0.6km9p.mongodb.net/mern?retryWrites=true&w=majority"
+  )
   .then(() => {
     // If the connection is successful, start the backend server.
     app.listen(5000);
