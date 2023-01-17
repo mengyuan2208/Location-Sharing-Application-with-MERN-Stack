@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -11,6 +14,9 @@ const app = express();
 // Parses incoming request body, extracts JSON data, and converts it to regular JS data structures,
 // and calls next automatically.
 app.use(bodyParser.json());
+
+// return the requested file
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -34,6 +40,11 @@ app.use((req, res, next) => {
 // If providing four parameters, Express will recognize it as an error handling middleware function.
 // Only be executed on the requests that have an error.
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
   // check if a response has already been sent
   if (res.headerSent) {
     // In this case we won't send a response, because we have already sent a response, and you can only send one response in total.
